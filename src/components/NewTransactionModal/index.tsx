@@ -1,3 +1,5 @@
+import { useContext } from "react";
+import { TransactionsContext } from "../../contexts/TransactionsContext";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowCircleDown, ArrowCircleUp, X } from "@phosphor-icons/react";
 import * as z from 'zod';
@@ -20,15 +22,24 @@ export function NewTransactionModal() {
     control,
     register,
     handleSubmit,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
+    reset
   } = useForm<NewTransactionFormInputs>({
     resolver: zodResolver(newTransactionFormSchema)
   })
+  const { createTransaction } = useContext(TransactionsContext)
 
   async function handleCreateNewTransaction(data: NewTransactionFormInputs) {
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    const { description, price, category, type } = data;
 
-    console.log(data)
+    await createTransaction({
+      description,
+      category,
+      price,
+      type
+    })
+
+    reset()
   }
 
   return (
